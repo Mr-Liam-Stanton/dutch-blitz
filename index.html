@@ -661,6 +661,14 @@
         .player.winner .floating-emoji {
             opacity: 1;
         }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -673,6 +681,7 @@
     
     <div class="game-info">
         <div class="round">Round <span id="currentRound">1</span></div>
+        <div class="timer">Time: <span id="roundTimer">00:00</span></div>
     </div>
 
     <div class="player" id="liamPlayer">
@@ -704,6 +713,7 @@
     </div>
 
     <button onclick="submitRound()">Submit Round</button>
+    <button onclick="undoLastRound()" style="background-color: var(--blue-color);">Undo Last Round</button>
     <button onclick="newGame()" style="background-color: var(--blue-color);">New Game</button>
 
     <div class="history">
@@ -779,6 +789,86 @@
         let liamRoundsWon = 0;
         let jasmineRoundsWon = 0;
         let games = [];
+
+        // Timer functionality
+        let timerInterval;
+        let roundStartTime;
+        let lastRoundTime = 0;
+
+        function startTimer() {
+            roundStartTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - roundStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('roundTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            lastRoundTime = Math.floor((Date.now() - roundStartTime) / 1000);
+        }
+
+        // Undo functionality
+        let lastRound = null;
+
+        function saveLastRound() {
+            lastRound = {
+                liamScore: parseInt(document.getElementById('liamScore').value) || 0,
+                jasmineScore: parseInt(document.getElementById('jasmineScore').value) || 0,
+                liamTotal,
+                jasmineTotal,
+                liamTotalPoints,
+                jasmineTotalPoints,
+                liamRoundsWon,
+                jasmineRoundsWon,
+                currentRound,
+                time: lastRoundTime
+            };
+        }
+
+        function undoLastRound() {
+            if (!lastRound) return;
+            
+            playSound('click');
+            
+            // Restore previous state
+            liamTotal = lastRound.liamTotal;
+            jasmineTotal = lastRound.jasmineTotal;
+            liamTotalPoints = lastRound.liamTotalPoints;
+            jasmineTotalPoints = lastRound.jasmineTotalPoints;
+            liamRoundsWon = lastRound.liamRoundsWon;
+            jasmineRoundsWon = lastRound.jasmineRoundsWon;
+            currentRound = lastRound.currentRound;
+            
+            // Update display
+            document.getElementById('liamTotal').textContent = liamTotal;
+            document.getElementById('jasmineTotal').textContent = jasmineTotal;
+            document.getElementById('liamTotalPoints').textContent = liamTotalPoints;
+            document.getElementById('jasmineTotalPoints').textContent = jasmineTotalPoints;
+            document.getElementById('liamRoundsWon').textContent = liamRoundsWon;
+            document.getElementById('jasmineRoundsWon').textContent = jasmineRoundsWon;
+            document.getElementById('currentRound').textContent = currentRound;
+            
+            // Clear inputs
+            document.getElementById('liamScore').value = '';
+            document.getElementById('jasmineScore').value = '';
+            
+            // Reset timer
+            stopTimer();
+            document.getElementById('roundTimer').textContent = '00:00';
+            startTimer();
+            
+            // Reset last round
+            lastRound = null;
+            
+            // Focus on Liam's input
+            document.getElementById('liamScore').focus();
+        }
 
         // Load saved data when page loads
         function loadSavedData() {
@@ -910,6 +1000,12 @@
             const liamScore = parseInt(document.getElementById('liamScore').value) || 0;
             const jasmineScore = parseInt(document.getElementById('jasmineScore').value) || 0;
 
+            // Save current state before updating
+            saveLastRound();
+
+            // Stop current timer
+            stopTimer();
+
             // Remove previous classes
             document.getElementById('liamPlayer').classList.remove('winner', 'negative');
             document.getElementById('jasminePlayer').classList.remove('winner', 'negative');
@@ -963,6 +1059,9 @@
             currentRound++;
             document.getElementById('currentRound').textContent = currentRound;
 
+            // Start new timer
+            startTimer();
+
             // Focus on Liam's input for next round
             document.getElementById('liamScore').focus();
         }
@@ -1003,11 +1102,16 @@
         }
 
         function newGame() {
+            // Stop current timer
+            stopTimer();
+            document.getElementById('roundTimer').textContent = '00:00';
+
             // Update game history
             const game = {
                 liamScore: liamTotal,
                 jasmineScore: jasmineTotal,
-                winner: liamTotal > jasmineTotal ? 'Liam' : jasmineTotal > liamTotal ? 'Jasmin' : 'Tie'
+                winner: liamTotal > jasmineTotal ? 'Liam' : jasmineTotal > liamTotal ? 'Jasmin' : 'Tie',
+                time: lastRoundTime
             };
             
             if (liamTotal > jasmineTotal) {
@@ -1032,16 +1136,22 @@
             currentRound = 1;
             liamTotal = 0;
             jasmineTotal = 0;
+            lastRound = null;
             document.getElementById('currentRound').textContent = currentRound;
             document.getElementById('liamTotal').textContent = '0';
             document.getElementById('jasmineTotal').textContent = '0';
+            
+            // Start new timer
+            startTimer();
+            
             document.getElementById('liamScore').focus();
         }
 
-        // Focus on Liam's input when page loads
+        // Start timer when page loads
         window.onload = function() {
             loadSavedData(); // Load saved data first
             document.getElementById('liamScore').focus();
+            startTimer(); // Start the timer
         };
     </script>
 </body>
