@@ -696,6 +696,7 @@
             <input type="number" id="liamScore" placeholder="Round Score" onkeypress="if(event.key === 'Enter') submitRound()">
         </div>
         <div class="score">Total: <span id="liamTotal">0</span></div>
+        <div class="mini-chart" id="liamChart"></div>
     </div>
 
     <div class="player" id="jasminePlayer">
@@ -710,6 +711,7 @@
             <input type="number" id="jasmineScore" placeholder="Round Score" onkeypress="if(event.key === 'Enter') submitRound()">
         </div>
         <div class="score">Total: <span id="jasmineTotal">0</span></div>
+        <div class="mini-chart" id="jasmineChart"></div>
     </div>
 
     <button onclick="submitRound()">Submit Round</button>
@@ -835,6 +837,11 @@
             if (!lastRound) return;
             
             playSound('click');
+            
+            // Remove last scores from recent scores
+            recentScores.liam.pop();
+            recentScores.jasmine.pop();
+            updateMiniCharts();
             
             // Restore previous state
             liamTotal = lastRound.liamTotal;
@@ -995,6 +1002,52 @@
             return false;
         }
 
+        // Recent scores tracking
+        let recentScores = {
+            liam: [],
+            jasmine: []
+        };
+
+        function updateMiniCharts() {
+            const liamChart = document.getElementById('liamChart');
+            const jasmineChart = document.getElementById('jasmineChart');
+            
+            // Clear existing charts
+            liamChart.innerHTML = '';
+            jasmineChart.innerHTML = '';
+            
+            // Get the last 5 scores for each player
+            const liamScores = recentScores.liam.slice(-5);
+            const jasmineScores = recentScores.jasmine.slice(-5);
+            
+            // Find max score for scaling
+            const maxScore = Math.max(
+                ...liamScores.map(Math.abs),
+                ...jasmineScores.map(Math.abs),
+                1 // Prevent division by zero
+            );
+            
+            // Create bars for Liam's chart
+            liamScores.forEach(score => {
+                const bar = document.createElement('div');
+                bar.className = 'mini-chart-bar';
+                bar.style.height = `${(Math.abs(score) / maxScore) * 100}%`;
+                bar.style.background = score >= 0 ? 'var(--primary-color)' : 'var(--danger-color)';
+                bar.title = `Score: ${score}`;
+                liamChart.appendChild(bar);
+            });
+            
+            // Create bars for Jasmin's chart
+            jasmineScores.forEach(score => {
+                const bar = document.createElement('div');
+                bar.className = 'mini-chart-bar';
+                bar.style.height = `${(Math.abs(score) / maxScore) * 100}%`;
+                bar.style.background = score >= 0 ? 'var(--primary-color)' : 'var(--danger-color)';
+                bar.title = `Score: ${score}`;
+                jasmineChart.appendChild(bar);
+            });
+        }
+
         function submitRound() {
             playSound('click');
             const liamScore = parseInt(document.getElementById('liamScore').value) || 0;
@@ -1005,6 +1058,13 @@
 
             // Stop current timer
             stopTimer();
+
+            // Add scores to recent scores
+            recentScores.liam.push(liamScore);
+            recentScores.jasmine.push(jasmineScore);
+
+            // Update mini charts
+            updateMiniCharts();
 
             // Remove previous classes
             document.getElementById('liamPlayer').classList.remove('winner', 'negative');
@@ -1105,6 +1165,13 @@
             // Stop current timer
             stopTimer();
             document.getElementById('roundTimer').textContent = '00:00';
+
+            // Reset recent scores
+            recentScores = {
+                liam: [],
+                jasmine: []
+            };
+            updateMiniCharts();
 
             // Update game history
             const game = {
