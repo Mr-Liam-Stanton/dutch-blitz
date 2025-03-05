@@ -204,7 +204,11 @@
         <div style="margin-top: 15px;">
             <strong>Total Games:</strong> <span id="totalGames">0</span><br>
             <strong>Liam Wins:</strong> <span id="liamWins">0</span><br>
-            <strong>Jasmin Wins:</strong> <span id="jasmineWins">0</span>
+            <strong>Jasmin Wins:</strong> <span id="jasmineWins">0</span><br>
+            <strong>Liam Total Points:</strong> <span id="liamTotalPoints">0</span><br>
+            <strong>Jasmin Total Points:</strong> <span id="jasmineTotalPoints">0</span><br>
+            <strong>Liam Rounds Won:</strong> <span id="liamRoundsWon">0</span><br>
+            <strong>Jasmin Rounds Won:</strong> <span id="jasmineRoundsWon">0</span>
         </div>
     </div>
 
@@ -235,6 +239,10 @@
         let totalGames = 0;
         let liamWins = 0;
         let jasmineWins = 0;
+        let liamTotalPoints = 0;
+        let jasmineTotalPoints = 0;
+        let liamRoundsWon = 0;
+        let jasmineRoundsWon = 0;
         let games = [];
 
         // Load saved data when page loads
@@ -246,11 +254,19 @@
                 totalGames = data.totalGames || 0;
                 liamWins = data.liamWins || 0;
                 jasmineWins = data.jasmineWins || 0;
+                liamTotalPoints = data.liamTotalPoints || 0;
+                jasmineTotalPoints = data.jasmineTotalPoints || 0;
+                liamRoundsWon = data.liamRoundsWon || 0;
+                jasmineRoundsWon = data.jasmineRoundsWon || 0;
                 
                 // Update display
                 document.getElementById('totalGames').textContent = totalGames;
                 document.getElementById('liamWins').textContent = liamWins;
                 document.getElementById('jasmineWins').textContent = jasmineWins;
+                document.getElementById('liamTotalPoints').textContent = liamTotalPoints;
+                document.getElementById('jasmineTotalPoints').textContent = jasmineTotalPoints;
+                document.getElementById('liamRoundsWon').textContent = liamRoundsWon;
+                document.getElementById('jasmineRoundsWon').textContent = jasmineRoundsWon;
                 updateHistory();
             }
         }
@@ -261,7 +277,11 @@
                 games: games,
                 totalGames: totalGames,
                 liamWins: liamWins,
-                jasmineWins: jasmineWins
+                jasmineWins: jasmineWins,
+                liamTotalPoints: liamTotalPoints,
+                jasmineTotalPoints: jasmineTotalPoints,
+                liamRoundsWon: liamRoundsWon,
+                jasmineRoundsWon: jasmineRoundsWon
             };
             localStorage.setItem('dutchBlitzData', JSON.stringify(data));
         }
@@ -279,9 +299,22 @@
 
             liamTotal += liamScore;
             jasmineTotal += jasmineScore;
+            liamTotalPoints += liamScore;
+            jasmineTotalPoints += jasmineScore;
+
+            // Update rounds won
+            if (liamScore > jasmineScore) {
+                liamRoundsWon++;
+            } else if (jasmineScore > liamScore) {
+                jasmineRoundsWon++;
+            }
 
             document.getElementById('liamTotal').textContent = liamTotal;
             document.getElementById('jasmineTotal').textContent = jasmineTotal;
+            document.getElementById('liamTotalPoints').textContent = liamTotalPoints;
+            document.getElementById('jasmineTotalPoints').textContent = jasmineTotalPoints;
+            document.getElementById('liamRoundsWon').textContent = liamRoundsWon;
+            document.getElementById('jasmineRoundsWon').textContent = jasmineRoundsWon;
 
             // Clear inputs and increment round
             document.getElementById('liamScore').value = '';
