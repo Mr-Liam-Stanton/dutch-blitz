@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Liam vs Jasmine - Dutch Blitz</title>
+    <title>Liam vs Jasmin - Dutch Blitz</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#4CAF50">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -184,7 +184,7 @@
     </div>
 
     <div class="player">
-        <div class="player-name">Jasmine</div>
+        <div class="player-name">Jasmin</div>
         <div class="score-input">
             <div class="score-controls">
                 <button class="score-toggle" onclick="toggleScore('jasmineScore', true)">+</button>
@@ -204,7 +204,7 @@
         <div style="margin-top: 15px;">
             <strong>Total Games:</strong> <span id="totalGames">0</span><br>
             <strong>Liam Wins:</strong> <span id="liamWins">0</span><br>
-            <strong>Jasmine Wins:</strong> <span id="jasmineWins">0</span>
+            <strong>Jasmin Wins:</strong> <span id="jasmineWins">0</span>
         </div>
     </div>
 
@@ -297,7 +297,7 @@
             const game = games[gameIndex];
             if (game.winner === 'Liam') {
                 liamWins--;
-            } else if (game.winner === 'Jasmine') {
+            } else if (game.winner === 'Jasmin') {
                 jasmineWins--;
             }
             totalGames--;
@@ -317,8 +317,8 @@
                 historyItem.className = 'history-item';
                 historyItem.innerHTML = `
                     <div>
-                        Game ${index + 1}: Liam ${game.liamScore} - Jasmine ${game.jasmineScore} 
-                        <span class="${game.winner === 'Liam' ? 'winner' : game.winner === 'Jasmine' ? 'winner' : ''}">
+                        Game ${index + 1}: Liam ${game.liamScore} - Jasmin ${game.jasmineScore} 
+                        <span class="${game.winner === 'Liam' ? 'winner' : game.winner === 'Jasmin' ? 'winner' : ''}">
                             ${game.winner === 'Tie' ? '(Tie)' : `(${game.winner} wins)`}
                         </span>
                     </div>
@@ -333,7 +333,7 @@
             const game = {
                 liamScore: liamTotal,
                 jasmineScore: jasmineTotal,
-                winner: liamTotal > jasmineTotal ? 'Liam' : jasmineTotal > liamTotal ? 'Jasmine' : 'Tie'
+                winner: liamTotal > jasmineTotal ? 'Liam' : jasmineTotal > liamTotal ? 'Jasmin' : 'Tie'
             };
             
             if (liamTotal > jasmineTotal) {
