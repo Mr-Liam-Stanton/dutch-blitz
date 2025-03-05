@@ -9,154 +9,325 @@
     <meta name="apple-mobile-web-app-title" content="Dutch Blitz">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --danger-color: #f44336;
+            --danger-dark: #d32f2f;
+            --blue-color: #2196F3;
+            --blue-dark: #1976D2;
+            --text-color: #333;
+            --text-light: #666;
+            --background: #f5f7fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text-color);
+            line-height: 1.6;
             padding: 20px;
-            background-color: #f0f0f0;
             max-width: 600px;
             margin: 0 auto;
         }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         .warning {
             position: fixed;
-            right: 10px;
-            top: 10px;
-            background-color: #ff0000;
+            right: 20px;
+            top: 20px;
+            background-color: var(--danger-color);
             color: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            font-weight: bold;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            font-weight: 600;
             font-size: 16px;
             text-align: center;
-            max-width: 150px;
-            line-height: 1.2;
-            animation: pulse 2s infinite;
+            max-width: 200px;
+            line-height: 1.4;
+            animation: slideIn 0.5s ease-out, pulse 2s infinite;
             z-index: 1000;
         }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
         .game-info {
-            background-color: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .round {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        .player {
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 20px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.2s ease;
         }
+
+        .game-info:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .round {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .player {
+            background-color: var(--card-bg);
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .player:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
         .player-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .player-name::before {
+            content: '👤';
+            font-size: 1.2rem;
+        }
+
         .score-input {
             display: flex;
-            gap: 10px;
-            margin: 10px 0;
+            gap: 15px;
+            margin: 15px 0;
             align-items: center;
         }
+
         .score-controls {
             display: flex;
-            gap: 5px;
+            gap: 8px;
         }
+
         .score-toggle {
-            padding: 10px;
-            font-size: 20px;
-            width: 40px;
-            height: 40px;
+            padding: 12px;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            background-color: #4CAF50;
+            border-radius: 12px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
         }
+
+        .score-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
+        }
+
         .score-toggle.negative {
-            background-color: #f44336;
+            background-color: var(--danger-color);
         }
+
         input {
             flex: 1;
             padding: 15px;
-            font-size: 18px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            font-size: 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             text-align: center;
+            transition: all 0.2s ease;
         }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
         button {
             padding: 15px 25px;
-            margin: 5px;
-            font-size: 18px;
+            margin: 8px 0;
+            font-size: 1.1rem;
             cursor: pointer;
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             width: 100%;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
+
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background-color: var(--primary-dark);
         }
+
         .score {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #333;
-        }
-        .history {
-            background-color: white;
-            padding: 20px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .history h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        .history-item {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--text-color);
+            text-align: center;
             padding: 10px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 12px;
+        }
+
+        .history {
+            background-color: var(--card-bg);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .history h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history h2::before {
+            content: '📊';
+            font-size: 1.2rem;
+        }
+
+        .history-item {
+            padding: 15px;
             border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background-color 0.2s ease;
         }
+
+        .history-item:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
         .delete-game {
-            background-color: #f44336;
+            background-color: var(--danger-color);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
+            border-radius: 8px;
+            padding: 8px 15px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
+
         .delete-game:hover {
-            background-color: #d32f2f;
+            background-color: var(--danger-dark);
+            transform: translateY(-1px);
         }
+
         .winner {
-            color: #4CAF50;
-            font-weight: bold;
+            color: var(--primary-color);
+            font-weight: 600;
         }
+
         .loser {
-            color: #f44336;
+            color: var(--danger-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(76, 175, 80, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(76, 175, 80, 0.05);
+            border-radius: 12px;
+        }
+
+        .player-stat {
+            text-align: center;
+        }
+
+        .player-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .player-stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
         }
     </style>
 </head>
@@ -196,19 +367,46 @@
     </div>
 
     <button onclick="submitRound()">Submit Round</button>
-    <button onclick="newGame()" style="background-color: #2196F3;">New Game</button>
+    <button onclick="newGame()" style="background-color: var(--blue-color);">New Game</button>
 
     <div class="history">
         <h2>Game History</h2>
         <div id="gameHistory"></div>
-        <div style="margin-top: 15px;">
-            <strong>Total Games:</strong> <span id="totalGames">0</span><br>
-            <strong>Liam Wins:</strong> <span id="liamWins">0</span><br>
-            <strong>Jasmin Wins:</strong> <span id="jasmineWins">0</span><br>
-            <strong>Liam Total Points:</strong> <span id="liamTotalPoints">0</span><br>
-            <strong>Jasmin Total Points:</strong> <span id="jasmineTotalPoints">0</span><br>
-            <strong>Liam Rounds Won:</strong> <span id="liamRoundsWon">0</span><br>
-            <strong>Jasmin Rounds Won:</strong> <span id="jasmineRoundsWon">0</span>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">Total Games</div>
+                <div class="stat-value" id="totalGames">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Liam Wins</div>
+                <div class="stat-value" id="liamWins">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Jasmin Wins</div>
+                <div class="stat-value" id="jasmineWins">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Total Rounds</div>
+                <div class="stat-value" id="totalRounds">0</div>
+            </div>
+        </div>
+        <div class="player-stats">
+            <div class="player-stat">
+                <div class="player-stat-label">Liam Total Points</div>
+                <div class="player-stat-value" id="liamTotalPoints">0</div>
+            </div>
+            <div class="player-stat">
+                <div class="player-stat-label">Jasmin Total Points</div>
+                <div class="player-stat-value" id="jasmineTotalPoints">0</div>
+            </div>
+            <div class="player-stat">
+                <div class="player-stat-label">Liam Rounds Won</div>
+                <div class="player-stat-value" id="liamRoundsWon">0</div>
+            </div>
+            <div class="player-stat">
+                <div class="player-stat-label">Jasmin Rounds Won</div>
+                <div class="player-stat-value" id="jasmineRoundsWon">0</div>
+            </div>
         </div>
     </div>
 
