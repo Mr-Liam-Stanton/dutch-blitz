@@ -237,6 +237,35 @@
         let jasmineWins = 0;
         let games = [];
 
+        // Load saved data when page loads
+        function loadSavedData() {
+            const savedData = localStorage.getItem('dutchBlitzData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                games = data.games || [];
+                totalGames = data.totalGames || 0;
+                liamWins = data.liamWins || 0;
+                jasmineWins = data.jasmineWins || 0;
+                
+                // Update display
+                document.getElementById('totalGames').textContent = totalGames;
+                document.getElementById('liamWins').textContent = liamWins;
+                document.getElementById('jasmineWins').textContent = jasmineWins;
+                updateHistory();
+            }
+        }
+
+        // Save data whenever it changes
+        function saveData() {
+            const data = {
+                games: games,
+                totalGames: totalGames,
+                liamWins: liamWins,
+                jasmineWins: jasmineWins
+            };
+            localStorage.setItem('dutchBlitzData', JSON.stringify(data));
+        }
+
         function toggleScore(inputId, isPositive) {
             const input = document.getElementById(inputId);
             const currentValue = parseInt(input.value) || 0;
@@ -277,6 +306,7 @@
             document.getElementById('totalGames').textContent = totalGames;
             document.getElementById('liamWins').textContent = liamWins;
             document.getElementById('jasmineWins').textContent = jasmineWins;
+            saveData(); // Save after deleting
         }
 
         function updateHistory() {
@@ -321,6 +351,9 @@
             document.getElementById('liamWins').textContent = liamWins;
             document.getElementById('jasmineWins').textContent = jasmineWins;
 
+            // Save data after new game
+            saveData();
+
             // Reset game
             currentRound = 1;
             liamTotal = 0;
@@ -333,6 +366,7 @@
 
         // Focus on Liam's input when page loads
         window.onload = function() {
+            loadSavedData(); // Load saved data first
             document.getElementById('liamScore').focus();
         };
     </script>
