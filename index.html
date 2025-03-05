@@ -10,6 +10,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192x192.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -34,12 +35,13 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--background);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
             color: var(--text-color);
             line-height: 1.6;
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
+            min-height: 100vh;
         }
 
         h1 {
@@ -49,6 +51,22 @@
             margin-bottom: 1.5rem;
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '🎮';
+            position: absolute;
+            right: -40px;
+            top: -10px;
+            font-size: 2rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .warning {
@@ -80,6 +98,18 @@
             100% { transform: scale(1); }
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes winner {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
         .game-info {
             background-color: var(--card-bg);
             padding: 20px;
@@ -88,11 +118,24 @@
             box-shadow: var(--shadow);
             text-align: center;
             transition: transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .game-info:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
+        .game-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .game-info:hover::before {
+            transform: translateX(100%);
         }
 
         .round {
@@ -100,6 +143,22 @@
             font-weight: 700;
             color: var(--primary-color);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .round::after {
+            content: '🎲';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: translateY(-50%) rotate(0deg); }
+            to { transform: translateY(-50%) rotate(360deg); }
         }
 
         .player {
@@ -108,12 +167,19 @@
             margin: 15px 0;
             border-radius: 16px;
             box-shadow: var(--shadow);
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .player:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
+        .player.winner {
+            animation: winner 0.5s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #e8f5e9 100%);
+        }
+
+        .player.negative {
+            animation: shake 0.5s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #ffebee 100%);
         }
 
         .player-name {
@@ -129,6 +195,7 @@
         .player-name::before {
             content: '👤';
             font-size: 1.2rem;
+            animation: bounce 2s infinite;
         }
 
         .score-input {
@@ -158,6 +225,26 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-toggle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .score-toggle:active::after {
+            width: 200px;
+            height: 200px;
         }
 
         .score-toggle:hover {
@@ -178,12 +265,14 @@
             text-align: center;
             transition: all 0.2s ease;
             max-width: 120px;
+            background: #f8f9fa;
         }
 
         input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            background: white;
         }
 
         button {
@@ -198,6 +287,26 @@
             width: 100%;
             font-weight: 600;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        button:active::after {
+            width: 300px;
+            height: 300px;
         }
 
         button:hover {
@@ -213,8 +322,26 @@
             color: var(--text-color);
             text-align: center;
             padding: 10px;
-            background-color: rgba(76, 175, 80, 0.1);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.2) 100%);
             border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .score:hover::before {
+            transform: translateX(100%);
         }
 
         .history {
@@ -223,6 +350,18 @@
             margin: 20px 0;
             border-radius: 16px;
             box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history::before {
+            content: '🎯';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
         }
 
         .history h2 {
@@ -238,6 +377,7 @@
         .history h2::before {
             content: '📊';
             font-size: 1.2rem;
+            animation: bounce 2s infinite;
         }
 
         .history-item {
@@ -246,11 +386,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .history-item:hover {
             background-color: rgba(0, 0, 0, 0.02);
+            transform: translateX(5px);
         }
 
         .delete-game {
@@ -263,6 +406,26 @@
             font-size: 0.9rem;
             font-weight: 500;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delete-game::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .delete-game:active::after {
+            width: 200px;
+            height: 200px;
         }
 
         .delete-game:hover {
@@ -273,6 +436,17 @@
         .winner {
             color: var(--primary-color);
             font-weight: 600;
+            position: relative;
+        }
+
+        .winner::after {
+            content: '🏆';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            animation: bounce 1s infinite;
         }
 
         .loser {
@@ -285,13 +459,31 @@
             gap: 15px;
             margin-top: 20px;
             padding: 20px;
-            background-color: rgba(76, 175, 80, 0.05);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.1) 100%);
             border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-grid::before {
+            content: '🎮';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
         }
 
         .stat-item {
             text-align: center;
             padding: 10px;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
         }
 
         .stat-label {
@@ -311,12 +503,30 @@
             justify-content: space-between;
             margin-top: 15px;
             padding: 15px;
-            background-color: rgba(76, 175, 80, 0.05);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.1) 100%);
             border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-stats::before {
+            content: '🎯';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
         }
 
         .player-stat {
             text-align: center;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .player-stat:hover {
+            transform: translateY(-2px);
         }
 
         .player-stat-label {
@@ -329,6 +539,16 @@
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--text-color);
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
         }
     </style>
 </head>
@@ -343,7 +563,7 @@
         <div class="round">Round <span id="currentRound">1</span></div>
     </div>
 
-    <div class="player">
+    <div class="player" id="liamPlayer">
         <div class="player-name">Liam</div>
         <div class="score-input">
             <div class="score-controls">
@@ -355,7 +575,7 @@
         <div class="score">Total: <span id="liamTotal">0</span></div>
     </div>
 
-    <div class="player">
+    <div class="player" id="jasminePlayer">
         <div class="player-name">Jasmin</div>
         <div class="score-input">
             <div class="score-controls">
@@ -492,20 +712,61 @@
             input.value = isPositive ? absValue : -absValue;
         }
 
+        function triggerConfetti(player) {
+            const playerElement = document.getElementById(player + 'Player');
+            const rect = playerElement.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: x / window.innerWidth, y: y / window.innerHeight }
+            });
+        }
+
+        function checkGameEnd() {
+            if (liamTotal >= 75 || jasmineTotal >= 75) {
+                const winner = liamTotal > jasmineTotal ? 'Liam' : jasmineTotal > liamTotal ? 'Jasmin' : 'Tie';
+                if (winner !== 'Tie') {
+                    triggerConfetti(winner.toLowerCase());
+                    alert(`${winner} wins the game! 🎉`);
+                }
+                return true;
+            }
+            return false;
+        }
+
         function submitRound() {
             const liamScore = parseInt(document.getElementById('liamScore').value) || 0;
             const jasmineScore = parseInt(document.getElementById('jasmineScore').value) || 0;
+
+            // Remove previous classes
+            document.getElementById('liamPlayer').classList.remove('winner', 'negative');
+            document.getElementById('jasminePlayer').classList.remove('winner', 'negative');
 
             liamTotal += liamScore;
             jasmineTotal += jasmineScore;
             liamTotalPoints += liamScore;
             jasmineTotalPoints += jasmineScore;
 
-            // Update rounds won
+            // Update rounds won and trigger animations
             if (liamScore > jasmineScore) {
                 liamRoundsWon++;
+                document.getElementById('liamPlayer').classList.add('winner');
+                triggerConfetti('liam');
             } else if (jasmineScore > liamScore) {
                 jasmineRoundsWon++;
+                document.getElementById('jasminePlayer').classList.add('winner');
+                triggerConfetti('jasmine');
+            }
+
+            // Add negative score animation
+            if (liamScore < 0) {
+                document.getElementById('liamPlayer').classList.add('negative');
+            }
+            if (jasmineScore < 0) {
+                document.getElementById('jasminePlayer').classList.add('negative');
             }
 
             document.getElementById('liamTotal').textContent = liamTotal;
@@ -514,6 +775,12 @@
             document.getElementById('jasmineTotalPoints').textContent = jasmineTotalPoints;
             document.getElementById('liamRoundsWon').textContent = liamRoundsWon;
             document.getElementById('jasmineRoundsWon').textContent = jasmineRoundsWon;
+
+            // Check for game end
+            if (checkGameEnd()) {
+                newGame();
+                return;
+            }
 
             // Clear inputs and increment round
             document.getElementById('liamScore').value = '';
